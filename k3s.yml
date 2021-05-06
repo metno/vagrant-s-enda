@@ -13,18 +13,10 @@
         max-size: 100m
       storage-driver: overlay2
       dns:
-        - 9.9.9.9
-        - 149.112.112.112
+        - 1.1.1.1
+        - 1.0.0.1
 
   tasks:
-    - name: set docker proxy
-      set_fact:
-        docker_json: '{{ docker_json | combine({ "registry-mirrors": [ "http://" + proxy_address + ":5000" ] }) }}'
-      when:
-        - proxy_address is defined
-        - proxy_address|length > 0
-        - use_docker
-
     - name: install python-apt
       apt:
         name: python3-apt
@@ -72,31 +64,6 @@
       when: use_docker
 
     ## Other config
-
-    - name: set cri proxy
-      set_fact:
-        cri_proxy:
-          mirrors:
-            docker.io:
-              endpoint:
-                - "http://{{ proxy_address }}:5000"
-      when:
-        - proxy_address is defined
-        - proxy_address|length > 0
-
-    - name: create k3s config directory
-      file:
-        path: /etc/rancher/k3s
-        state: directory
-        mode: 0755
-
-    - name: cri dockker caching proxy
-      copy:
-        dest: /etc/rancher/k3s/registries.yaml
-        content: |
-          {{ cri_proxy|default({})|to_nice_yaml }}
-        mode: 0644
-      when: cri_proxy is defined
 
     - name: install ufw
       package:

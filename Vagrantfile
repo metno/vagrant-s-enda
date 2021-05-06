@@ -23,9 +23,6 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
-    PROXY="#{ENV['PROXY']}"
-    [ ! -z "${PROXY}" ] || echo 'Acquire::http::proxy "http://'${PROXY}':3142/";' > /etc/apt/apt.conf.d/80proxy
-
     apt-get update
     apt-get install -y python3-pip
     pip3 install ansible
@@ -34,7 +31,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision "k3s", type: "ansible_local" do |a|
     a.playbook = "k3s.yml"
     a.extra_vars = {
-      "proxy_address": "#{ENV['PROXY']}",
       "node_ip": "10.10.10.10"
     }
   end
