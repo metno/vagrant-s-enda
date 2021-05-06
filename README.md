@@ -12,7 +12,7 @@ vagrant up
 
 ### Commands available
 
-All commands can be run from the vagrant user inside the VM.
+All commands can be run from the `vagrant` user inside the VM.
 
 * [`docker`](https://docs.docker.com/engine/reference/commandline/cli/) --- used as backend for `k3s`.
 * [`kubectl`](https://github.com/kubernetes/kubectl) --- to interact with Kubernets.
