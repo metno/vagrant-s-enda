@@ -6,6 +6,7 @@
   vars:
     k3s_version: v1.20.6+k3s1
     k9s_version: v0.24.8
+    kustomize_version: v4.1.2
     use_docker: true
     docker_json:
       log-driver: json-file
@@ -190,3 +191,20 @@
       when:
         - not ansible_check_mode
         - k9s_download is changed
+
+    - name: get kustomize
+      get_url:
+        url: 'https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F{{ kustomize_version }}/kustomize_{{ kustomize_version }}_linux_amd64.tar.gz'
+        checksum: 'sha256:https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F{{ kustomize_version }}/checksums.txt'
+        dest: /tmp/kustomize.tar.gz
+      register: kustomize_download
+
+    - name: uncompress kustomize
+      unarchive:
+        src: /tmp/kustomize.tar.gz
+        dest: /usr/local/bin
+        remote_src: true
+        mode: 0755
+      when:
+        - not ansible_check_mode
+        - kustomize_download is changed
