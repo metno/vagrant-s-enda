@@ -5,7 +5,7 @@
 
   vars:
     k3s_version: v1.20.6+k3s1
-    k9s_version: v0.24.8
+    k9s_version: v0.24.9
     kustomize_version: v4.1.2
     use_docker: true
     docker_json:
@@ -154,7 +154,6 @@
         INSTALL_K3S_EXEC: "{{ docker_arg|default('') }} \
                            --node-ip {{ node_ip }} \
                            --disable traefik \
-                           --disable servicelb \
                            --default-local-storage-path /opt \
                            --write-kubeconfig-mode 666 \
                            --write-kubeconfig /home/vagrant/.kube/config"
