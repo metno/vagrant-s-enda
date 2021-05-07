@@ -53,7 +53,7 @@ To connect the dots, we have a C4 diagram which describes how it all connects to
 
 LAYOUT_TOP_DOWN()
 'LAYOUT_LEFT_RIGHT
-LAYOUT_WITH_LEGEND()
+'LAYOUT_WITH_LEGEND()
 'LAYOUT_AS_SKETCH()
 
 
