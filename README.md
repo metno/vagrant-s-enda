@@ -25,13 +25,15 @@ TODO:
 * [`10.10.10.10:8080`](http://10.10.10.10:8080) --- MMS API endpoint
 * `10.10.10.10:4222 --- MMS NATS server endpoint
 
-### Commands available inside VM
+### Inside the VM
 
 All commands can be run from the `vagrant` user inside the VM. Access the VM by entering it with `vagrant ssh`.
 
 * [`docker`](https://docs.docker.com/engine/reference/commandline/cli/) --- used as backend for `k3s`.
 * [`kubectl`](https://github.com/kubernetes/kubectl) --- to interact with Kubernets.
 * [`k9s`](https://github.com/derailed/k9s) --- for a terminal menu based interaction with Kubernetes.
+
+Permanent storage for Kubernetes is in subfolder under `/opt`.
 
 ## Usage examples
 
