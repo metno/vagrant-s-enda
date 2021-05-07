@@ -39,6 +39,13 @@ Permanent storage for Kubernetes is in subfolder under `/opt`.
 
 TODO
 
+## Diagram
+
+To connect the dots, we have a C4 diagram which describes how it all connects together.
+
+![Deployment](deployment.svg)
+
+
 
 <!---
 vim: set spell spelllang=en:
