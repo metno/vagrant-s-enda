@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pycsw
+spec:
+  type: LoadBalancer
+  clusterIP:
+  ports:
+    - protocol: TCP
+      name: http
+      targetPort: http
+      port: 80
+

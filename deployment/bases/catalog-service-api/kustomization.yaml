@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  app.kubernetes.io/instance: catalog-service
+  app.kubernetes.io/version: v0.1
+configMapGenerator:
+- name: pycsw-config
+  files:
+    - config/pycsw.cfg
+resources:
+  - catalog-service-postgis.yaml
+  - pycsw.yaml
+  - pycsw-ingest.yaml
+patchesStrategicMerge:
+  - pycsw-ingest-version.yaml
+

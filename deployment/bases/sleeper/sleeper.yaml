@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sleeper
+  annotations:
+    app.kubernetes.io/name: sleeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sleeper
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sleeper
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: sleeper
+          image: docker.io/alpine:latest
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+            - sleep $(( 3600 * 24 * 31 ))
