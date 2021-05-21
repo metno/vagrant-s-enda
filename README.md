@@ -19,11 +19,9 @@ You have now started a VM with services that you can access from you local machi
 These are the endpoint you have access to.
 
 * [`10.10.10.10`](http://10.10.10.10) --- PyCSW API endpoint
-
-TODO:
-
+* [`10.10.10.10:8000`](http://10.10.10.10:8000) -- DMCI API endpoint
 * [`10.10.10.10:8080`](http://10.10.10.10:8080) --- MMS API endpoint
-* `10.10.10.10:4222` --- MMS NATS server endpoint
+* `10.10.10.10:4222` --- MMS NATS endpoint
 
 ### Inside the VM
 
@@ -37,7 +35,13 @@ Permanent storage for Kubernetes is in subfolder under `/opt`.
 
 ## Usage examples
 
-TODO
+```bash
+curl --data-binary @mmd-file-to-ingest.xml http://10.10.10.10:8000/v1/insert
+```
+
+### Data storage
+
+All permanent storage folders resides in the VMs `/opt` folder. Kubernetes assigns subfolder here dynamically which are mounted into the containers.
 
 ## Diagram
 
@@ -78,7 +82,7 @@ System_Boundary(k8s_env, "Kubernetes environment") {
   '
   Component(catalog_service_postgis_service, "catalog-service-postgis", "service", "Service component exposing PostGIS on port 5432.")
   Component(pycsw_service, "pycsw", "service", "Service component exposing PyCSW API on port 80.")
-  Component("service_dmci", "dmci", "service", "Service component exposing PyCSW API on port 8000.")
+  Component("service_dmci", "dmci", "service", "Service component exposing DMCI API on port 8000.")
   Component("service_mms_nats", "mms-nats", "service", "MMS Nats service exposed on NodePort on 4222.")
   Component("service_mms_http", "mms-http", "service", "MMS API service exposed on port 8080.")
 
@@ -140,9 +144,9 @@ System_Boundary(k8s_env, "Kubernetes environment") {
   '
 
   Rel(internal_user, pycsw_service, "Access CSW API via", "10.10.10.10:80")
-  Rel(internal_user, service_dmci, "Access CSW API via", "10.10.10.10:8000")
-  Rel(internal_user, service_mms_nats, "Access CSW API via", "10.10.10.10:4222")
-  Rel(internal_user, service_mms_http, "Access CSW API via", "10.10.10.10:8080")
+  Rel(internal_user, service_dmci, "Access DMCI API via", "10.10.10.10:8000")
+  Rel(internal_user, service_mms_nats, "Access MMS Nats via", "10.10.10.10:4222")
+  Rel(internal_user, service_mms_http, "Access MMS API via", "10.10.10.10:8080")
 
 }
 
