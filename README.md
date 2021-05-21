@@ -66,58 +66,83 @@ Person(internal_user, "User", "User of the S-ENDA Vagrant setup.")
 
 System_Boundary(k8s_env, "Kubernetes environment") {
 
-'
-'
-'
+  '
+  ' ConfigMap
+  '
+  Component(catalog_service_postgis_conf, "catalog-service-postgis", "configmap", "passwd file for making PostGIS work in K8s.")
+  Component(pycsw_config, "pycsw-config", "configmap", "Common PyCSW configuration file.")
+  Component(config_dmci, "dmci-config", "configmap", "Configuraiton file for DMCI.")
 
-Container(dmci, "dcmi", "deployment, service, ingress", "<b>TODO:</b> API that receives MMD files, convert to ISO. Pushes ISO to PyCSW API, update s-enda-mmd-xml Git repository with new MMD file.")
-'Rel_R(dmci, pycsw_service, "Upload ISO with API")
+  '
+  ' Services
+  '
+  Component(catalog_service_postgis_service, "catalog-service-postgis", "service", "Service component exposing PostGIS on port 5432.")
+  Component(pycsw_service, "pycsw", "service", "Service component exposing PyCSW API on port 80.")
+  Component("service_dmci", "dmci", "service", "Service component exposing PyCSW API on port 8000.")
+  Component("service_mms_nats", "mms-nats", "service", "MMS Nats service exposed on NodePort on 4222.")
+  Component("service_mms_http", "mms-http", "service", "MMS API service exposed on port 8080.")
 
 
-'
-' ConfigMap
-'
-Component(catalog_service_postgis_conf, "catalog-service-postgis", "configmap", "passwd file for making PostGIS work in K8s.")
-Component(pycsw_config, "pycsw-config", "configmap", "Common PyCSW configuration file.")
+  '
+  ' Deployment catalog-service-postgis
+  '
+  Container_Boundary("catalog_service_postgis_boundary", "catalog-service-postgis deployment") {
+    Component(init_db_directory, "init-db-directory", "alpine", "Initialize database directory.")
+    Component(catalog_service_postgis, "catalog-service-postgis", "postgis/postgis", "Holds ISO data translated from MMD for PyCSW.")
+    Rel(catalog_service_postgis, catalog_service_postgis_conf, "Mount passwd file")
+  }
 
-'
-' Services
-'
-Component(catalog_service_postgis_service, "catalog-service-postgis", "service", "Service component exposing PostGIS on port 5432.")
-Component(pycsw_service, "pycsw", "service", "Service component exposing PyCSW API on port 80.")
-'
-' Deployment catalog-service-postgis
-'
-Container_Boundary("catalog_service_postgis_boundary", "catalog-service-postgis deployment") {
-  Component(init_db_directory, "init-db-directory", "alpine", "Initialize database directory.")
-  Component(catalog_service_postgis, "catalog-service-postgis", "postgis/postgis", "Holds ISO data translated from MMD for PyCSW.")
-  Rel_U(catalog_service_postgis, catalog_service_postgis_conf, "Mount passwd file")
-}
+  ComponentDb(catalog_service_postgis_storage, "catalog-service-postgis", "pvc", "Permanent storage for PostGIS.")
+  ComponentDb(storage_dmci, "dmci-storage", "pvc", "Permanent archive storage for DMCI.")
+  ComponentDb(storage_mms, "mms-workdir", "pvc", "Permanent storage for MMS.")
 
-ComponentDb(catalog_service_postgis_storage, "catalog-service-postgis", "pvc", "Permanent storage for PostGIS.")
+  Rel(catalog_service_postgis, catalog_service_postgis_storage, "Stores data in physical volume claim")
 
-Rel(catalog_service_postgis, catalog_service_postgis_storage, "Stores data in physical volume claim")
+  '
+  ' Deployment pycsw
+  '
+  Container_Boundary("pycsw_boundary", "pycsw deployment") {
+    Component(pycsw1, "pycsw", "geopython/pycsw", "Running instance of PyCSW.")
 
-'
-' Deployment pycsw
-'
-Container_Boundary("pycsw_boundary", "pycsw deployment") {
-  Component(pycsw1, "pycsw", "geopython/pycsw", "Running instance of PyCSW.")
+    Rel(pycsw1, pycsw_config, "Mount the config file")
+    Rel(pycsw_service, pycsw1, "LB")
+  }
 
-  Rel_U(pycsw1, pycsw_config, "Mount the config file")
-}
+  Rel(pycsw1, catalog_service_postgis_service, "Reads data from PostGIS.")
+  Rel(catalog_service_postgis_service, catalog_service_postgis, "LB")
 
-Rel(pycsw1, catalog_service_postgis_service, "Reads data from PostGIS.")
-Rel(catalog_service_postgis_service, catalog_service_postgis, "LB")
+  '
+  ' Deployment dmci
+  '
+  Container_Boundary("boundary_dmci", "dmci deployment") {
+    Component("container_dmci", "DMCI", "container-dmci", "The DMCI API.")
 
-'
-' Deployment pycsw-ingest
-'
+    Rel(service_dmci, "container_dmci", "LB")
+    Rel(container_dmci, storage_dmci, "Store XML files in archive, and persistent queue storage")
+    Rel_U(container_dmci, pycsw_service, "Insert new data")
+    Rel(container_dmci, config_dmci, "Mount config file")
+  }
 
-Rel(internal_user, pycsw_service, "Access CSW API via", "10.10.10.10:80")
-Rel(internal_user, dmci, "Uploads MMD file via", "10.10.10.10:8000")
-Rel_L(dmci, pycsw_service,"Forwards converted metadata to")
-Rel(pycsw_service, pycsw1, "LB")
+  '
+  ' Deployment dmci
+  '
+  Container_Boundary("boundary_mms", "mms deployment") {
+    Component(container_go_mms, "mms", "conainer-go-mms", "MMS Messaging Service.")
+
+    Rel(service_mms_nats, container_go_mms, "LB")
+    Rel(service_mms_http, container_go_mms, "LB")
+    Rel(container_go_mms, storage_mms, "Stores database")
+  }
+
+
+  '
+  ' Deployment pycsw-ingest
+  '
+
+  Rel(internal_user, pycsw_service, "Access CSW API via", "10.10.10.10:80")
+  Rel(internal_user, service_dmci, "Access CSW API via", "10.10.10.10:8000")
+  Rel(internal_user, service_mms_nats, "Access CSW API via", "10.10.10.10:4222")
+  Rel(internal_user, service_mms_http, "Access CSW API via", "10.10.10.10:8080")
 
 }
 
