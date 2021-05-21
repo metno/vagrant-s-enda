@@ -23,7 +23,7 @@ These are the endpoint you have access to.
 TODO:
 
 * [`10.10.10.10:8080`](http://10.10.10.10:8080) --- MMS API endpoint
-* `10.10.10.10:4222 --- MMS NATS server endpoint
+* `10.10.10.10:4222` --- MMS NATS server endpoint
 
 ### Inside the VM
 
