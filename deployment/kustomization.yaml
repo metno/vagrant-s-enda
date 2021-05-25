@@ -6,6 +6,12 @@ configMapGenerator:
     files:
       - config/pycsw.cfg
     name: pycsw-config
+  - behavior: merge
+    name: dmci-config
+    files:
+      - config/dmci/config.yaml
+generatorOptions:
+  disableNameSuffixHash: true
 resources:
   - bases/discovery-metadata-catalog-ingestor
   - bases/mms
