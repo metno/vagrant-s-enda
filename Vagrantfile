@@ -37,6 +37,6 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "start or update kubernetes deployment", type: "shell", run: "always", inline: <<-SHELL
-    kustomize build /vagrant/deployment | kubectl apply -f -
+    kustomize build /vagrant/deployment/environment/vagrant/ | kubectl apply -f -
   SHELL
 end

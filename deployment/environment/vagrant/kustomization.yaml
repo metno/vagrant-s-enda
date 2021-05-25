@@ -13,10 +13,10 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 resources:
-  - bases/discovery-metadata-catalog-ingestor
-  - bases/mms
-  - bases/sleeper
-  - bases/catalog-service-api
+  - ../../bases/discovery-metadata-catalog-ingestor
+  - ../../bases/mms
+  - ../../bases/sleeper
+  - ../../bases/catalog-service-api
 patchesStrategicMerge:
   - overrides-dmci.yaml
   - overrides-mms.yaml
