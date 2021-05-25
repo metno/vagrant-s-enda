@@ -101,14 +101,14 @@ System_Boundary(k8s_env, "Kubernetes environment") {
   '
   ' ConfigMap
   '
-  Component(catalog_service_postgis_conf, "catalog-service-postgis", "configmap", "passwd file for making PostGIS work in K8s.")
+  Component(catalog_service_postgis_conf, "postgis", "configmap", "passwd file for making PostGIS work in K8s.")
   Component(pycsw_config, "pycsw-config", "configmap", "Common PyCSW configuration file.")
   Component(config_dmci, "dmci-config", "configmap", "Configuraiton file for DMCI.")
 
   '
   ' Services
   '
-  Component(catalog_service_postgis_service, "catalog-service-postgis", "service", "Service component exposing PostGIS on port 5432.")
+  Component(catalog_service_postgis_service, "postgis", "service", "Service component exposing PostGIS on port 5432.")
   Component(pycsw_service, "pycsw", "service", "Service component exposing PyCSW API on port 80.")
   Component("service_dmci", "dmci", "service", "Service component exposing DMCI API on port 8000.")
   Component("service_mms_nats", "mms-nats", "service", "MMS Nats service exposed on NodePort on 4222.")
@@ -116,15 +116,15 @@ System_Boundary(k8s_env, "Kubernetes environment") {
 
 
   '
-  ' Deployment catalog-service-postgis
+  ' Deployment postgis
   '
-  Container_Boundary("catalog_service_postgis_boundary", "catalog-service-postgis deployment") {
+  Container_Boundary("catalog_service_postgis_boundary", "postgis deployment") {
     Component(init_db_directory, "init-db-directory", "alpine", "Initialize database directory.")
-    Component(catalog_service_postgis, "catalog-service-postgis", "postgis/postgis", "Holds ISO data translated from MMD for PyCSW.")
+    Component(catalog_service_postgis, "postgis", "postgis/postgis", "Holds ISO data translated from MMD for PyCSW.")
     Rel(catalog_service_postgis, catalog_service_postgis_conf, "Mount passwd file")
   }
 
-  ComponentDb(catalog_service_postgis_storage, "catalog-service-postgis", "pvc", "Permanent storage for PostGIS.")
+  ComponentDb(catalog_service_postgis_storage, "postgis", "pvc", "Permanent storage for PostGIS.")
   ComponentDb(storage_dmci, "dmci-storage", "pvc", "Permanent archive storage for DMCI.")
   ComponentDb(storage_mms, "mms-workdir", "pvc", "Permanent storage for MMS.")
 
