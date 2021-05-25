@@ -18,7 +18,7 @@ You have now started a VM with services that you can access from you local machi
 
 These are the endpoint you have access to.
 
-* [`10.10.10.10`](http://10.10.10.10) --- PyCSW API endpoint
+* [`10.10.10.10`](http://10.10.10.10) --- PyCSW API endpoint.
 * [`10.10.10.10:8000`](http://10.10.10.10:8000) -- DMCI API endpoint
 * [`10.10.10.10:8080`](http://10.10.10.10:8080) --- MMS API endpoint
 * `10.10.10.10:4222` --- MMS NATS endpoint
@@ -51,13 +51,25 @@ vagrant@k3s:/opt$ tree
 
 ## Usage examples
 
-### Insert data
+### Discovery Metadata Catalog Ingestor, DMCI
 
-This validates the MMD file. If the validation goes through, we ingest the MMD file into the archive folder, convert it to ISO and ingest it PyCSW.
+Ingesting MMD files to both archive and PyCSW.
+
+#### Insert
+
+This validates the MMD file. If the validation goes through, we ingest the MMD file into the archive folder, convert it to ISO and ingest it into PyCSW.
 
 ```bash
 curl --data-binary @test/metopb-avhrr-20201201155244-20201201160030.xml http://10.10.10.10:8000/v1/insert
 ```
+
+### PyCSW
+
+The CSW endpoint.
+
+#### List all datasets
+
+* http://10.10.10.10/?mode=opensearch&service=CSW&version=2.0.2&request=GetRecords&elementsetname=full&typenames=csw:Record&resulttype=results
 
 ## Diagram
 
