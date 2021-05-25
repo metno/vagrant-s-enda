@@ -44,7 +44,7 @@ images:
     newName: docker.io/metno/dmci
     newTag: latest
   - name: registry.met.no/s-enda/container-periodic-git-pusher
-    newName: alpine
+    newName: docker.io/alpine
     newTag: latest
   - name: registry.met.no/s-enda/container-go-mms
     newName: docker.io/metno/go-mms
