@@ -10,7 +10,7 @@ spec:
     - protocol: TCP
       name: http
       targetPort: http
-      port: 80
+      port: 8080
 
 ---
 apiVersion: v1

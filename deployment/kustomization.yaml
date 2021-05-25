@@ -6,7 +6,7 @@ configMapGenerator:
       - config/pycsw.cfg
     name: pycsw-config
 resources:
-  - bases/catalog-service-api/catalog-service-postgis.yaml
+  - bases/catalog-service-api/postgis.yaml
   - bases/catalog-service-api/pycsw.yaml
   - bases/discovery-metadata-catalog-ingestor
   - bases/mms

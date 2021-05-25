@@ -12,7 +12,7 @@ spec:
           # Dummy: don't do anything
           command:
             - echo
-          env: []
+          env:
       containers:
         - name: dmci
           image: registry.met.no/s-enda/container-dmci:latest
@@ -30,11 +30,12 @@ spec:
             - --log-level
             - info
         - name: periodic-git-pusher
-          # Dummy: just sleep for a week
+          # Dummy: just sleep for a month
           command:
-            - sleep
-            - 604800
-          env: []
+            - sh
+            - -c
+            - sleep $(( 3600 * 24 * 30 ))
+          env:
 
 ---
 apiVersion: v1
