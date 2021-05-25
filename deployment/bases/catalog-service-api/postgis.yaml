@@ -1,0 +1,97 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgis
+  labels:
+    app: postgis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+# Change to StatefulSet at a later time.
+# * StatefulSet contains volume definition.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgis
+  annotations:
+    app.kubernetes.io/name: postgis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgis
+    spec:
+      initContainers:
+        - name: init-db-directory
+          image: docker.io/alpine:latest
+          imagePullPolicy: Always
+          command:
+            - mkdir
+            - -pv
+            - /mnt/postgres-data
+          volumeMounts:
+            - mountPath: /mnt
+              name: postgis-vol
+              readOnly: false
+      containers:
+        - name: postgis
+          image: docker.io/postgis/postgis:13-master
+          imagePullPolicy: Always
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: csw_db
+          ports:
+            - name: postgis
+              containerPort: 5432
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgis-vol
+              subPath: postgres-data
+              readOnly: false
+            - mountPath: /etc/passwd
+              name: postgis-config
+              subPath: passwd
+              readOnly: true
+      volumes:
+        - name: postgis-vol
+          persistentVolumeClaim:
+            claimName: postgis
+        - name: postgis-config
+          configMap:
+            name: postgis-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgis
+  labels:
+    app.kubernetes.io/name: postgis
+spec:
+  selector:
+    app.kubernetes.io/name: postgis
+  # TODO: check if application gets problems, if so - remove clusterIP definition.
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      name: postgis
+      targetPort: postgis
+      port: 5432
+

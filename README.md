@@ -33,15 +33,15 @@ All commands can be run from the `vagrant` user inside the VM. Access the VM by 
 
 Permanent storage for Kubernetes is in subfolder under `/opt`.
 
+#### Data storage
+
+All permanent storage folders resides in the VMs `/opt` folder. Kubernetes assigns subfolder here dynamically which are mounted into the containers.
+
 ## Usage examples
 
 ```bash
 curl --data-binary @mmd-file-to-ingest.xml http://10.10.10.10:8000/v1/insert
 ```
-
-### Data storage
-
-All permanent storage folders resides in the VMs `/opt` folder. Kubernetes assigns subfolder here dynamically which are mounted into the containers.
 
 ## Diagram
 

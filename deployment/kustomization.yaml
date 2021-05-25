@@ -2,20 +2,32 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: default
 configMapGenerator:
-- files:
-  - config/pycsw.cfg
-  name: pycsw-config
+  - files:
+      - config/pycsw.cfg
+    name: pycsw-config
 resources:
-- bases/sleeper
-- bases/catalog-service-api/catalog-service-postgis.yaml
-- bases/catalog-service-api/pycsw.yaml
+  - bases/catalog-service-api/catalog-service-postgis.yaml
+  - bases/catalog-service-api/pycsw.yaml
+  - bases/discovery-metadata-catalog-ingestor
+  - bases/mms
+  - bases/sleeper
 patchesStrategicMerge:
-  - pycsw-port.yaml
-#  - mms-port.yaml
+  - overrides-dmci.yaml
+  - overrides-mms.yaml
+  - overrides-pycsw.yaml
 images:
-- name: docker.io/geopython/pycsw
-  newTag: 2.6.0
-- name: docker.io/postgis/postgis
-  newTag: 13-master
-- name: docker.io/alpine
-  newTag: latest
+  - name: docker.io/geopython/pycsw
+    newTag: 2.6.0
+  - name: docker.io/postgis/postgis
+    newTag: 13-master
+  - name: docker.io/alpine
+    newTag: latest
+  - name: registry.met.no/s-enda/container-dmci
+    newName: docker.io/metno/dmci
+    newTag: latest
+  - name: registry.met.no/s-enda/container-periodic-git-pusher
+    newName: alpine
+    newTag: latest
+  - name: registry.met.no/s-enda/container-go-mms
+    newName: docker.io/metno/go-mms
+    newTag: latest

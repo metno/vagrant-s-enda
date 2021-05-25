@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dmci
+spec:
+  template:
+    spec:
+      restartPolicy: Always
+      initContainers:
+        - name: periodic-git-pusher-pull
+          # Dummy: don't do anything
+          command:
+            - echo
+          env: []
+      containers:
+        - name: dmci
+          image: registry.met.no/s-enda/container-dmci:latest
+          command:
+            - gunicorn
+            - --worker-class
+            - sync
+            - --workers
+            - "5"
+            - --bind
+            - 0.0.0.0:8000
+            - wsgi:app
+            - --keep-alive
+            - "5"
+            - --log-level
+            - info
+        - name: periodic-git-pusher
+          # Dummy: just sleep for a week
+          command:
+            - sleep
+            - 604800
+          env: []
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dmci
+spec:
+  type: LoadBalancer
+  clusterIP:
+  ports:
+    - protocol: TCP
+      name: http
+      targetPort: http
+      port: 8000
+

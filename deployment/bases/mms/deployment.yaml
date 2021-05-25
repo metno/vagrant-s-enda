@@ -37,7 +37,7 @@ spec:
       containers:
         - name: mms
           image: registry.met.no/s-enda/container-go-mms:f92ccde9
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           command:
             - /app/mmsd
             - --hostname
