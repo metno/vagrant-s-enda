@@ -51,8 +51,12 @@ vagrant@k3s:/opt$ tree
 
 ## Usage examples
 
+### Insert data
+
+This validates the MMD file. If the validation goes through, we ingest the MMD file into the archive folder, convert it to ISO and ingest it PyCSW.
+
 ```bash
-curl --data-binary @mmd-file-to-ingest.xml http://10.10.10.10:8000/v1/insert
+curl --data-binary @test/metopb-avhrr-20201201155244-20201201160030.xml http://10.10.10.10:8000/v1/insert
 ```
 
 ## Diagram
