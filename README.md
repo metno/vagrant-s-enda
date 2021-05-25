@@ -18,9 +18,9 @@ You have now started a VM with services that you can access from you local machi
 
 These are the endpoint you have access to.
 
-* [`10.10.10.10`](http://10.10.10.10) --- PyCSW API endpoint.
-* [`10.10.10.10:8000`](http://10.10.10.10:8000) -- DMCI API endpoint
-* [`10.10.10.10:8080`](http://10.10.10.10:8080) --- MMS API endpoint
+* [`10.10.10.10`](http://10.10.10.10) --- [PyCSW](https://github.com/geopython/pycsw) API endpoint.
+* [`10.10.10.10:8000`](http://10.10.10.10:8000) -- [DMCI](https://github.com/geopython/pycsw) API endpoint
+* [`10.10.10.10:8080`](http://10.10.10.10:8080) --- [MMS](https://github.com/metno/go-mms) API endpoint
 * `10.10.10.10:4222` --- MMS NATS endpoint
 
 ### Inside the VM
