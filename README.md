@@ -31,11 +31,23 @@ All commands can be run from the `vagrant` user inside the VM. Access the VM by 
 * [`kubectl`](https://github.com/kubernetes/kubectl) --- to interact with Kubernets.
 * [`k9s`](https://github.com/derailed/k9s) --- for a terminal menu based interaction with Kubernetes.
 
-Permanent storage for Kubernetes is in subfolder under `/opt`.
-
 #### Data storage
 
-All permanent storage folders resides in the VMs `/opt` folder. Kubernetes assigns subfolder here dynamically which are mounted into the containers.
+All permanent storage folders resides in the VMs `/opt` folder. Kubernetes assigns subfolder here dynamically which are mounted into the containers. In opt folder run the `tree` command to find the archive folder. Example output.
+
+```plain
+vagrant@k3s:/opt$ tree
+.
+├── containerd [error opening dir]
+├── pvc-49dc1064-4e6b-4401-94b7-8e122e8524d1_default_postgis
+│   └── postgres-data [error opening dir]
+├── pvc-62205a5b-0b6d-4b21-be3c-be5c1f6a96fe_default_mms-workdir
+│   ├── events.db
+│   └── state.db
+└── pvc-eda8301d-fc59-4d3d-b6b3-28d1ebf2b110_default_dmci-storage
+    ├── archive       <------------ where MMD XML archive is stored
+    └── workdir
+```
 
 ## Usage examples
 

@@ -24,7 +24,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "prepare installation of k3s", type: "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y python3-pip
+    apt-get install -y python3-pip tree
     pip3 install ansible==3.3
   SHELL
 
