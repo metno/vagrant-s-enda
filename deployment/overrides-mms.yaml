@@ -6,11 +6,6 @@ metadata:
 spec:
   clusterIP:
   type: LoadBalancer
-  ports:
-    - protocol: TCP
-      name: http
-      targetPort: http
-      port: 8080
 
 ---
 apiVersion: v1
@@ -21,7 +16,8 @@ spec:
   clusterIP:
   type: LoadBalancer
   ports:
-  - protocol: TCP
-    name: nats
-    targetPort: nats
-    port: 4222
+    - protocol: TCP
+      name: nats
+      targetPort: nats
+      port: 4222
+      nodePort:

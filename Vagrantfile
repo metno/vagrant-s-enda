@@ -25,11 +25,12 @@ Vagrant.configure("2") do |config|
   config.vm.provision "prepare installation of k3s", type: "shell", inline: <<-SHELL
     apt-get update
     apt-get install -y python3-pip
-    pip3 install ansible
+    pip3 install ansible==3.3
   SHELL
 
   config.vm.provision "install k3s with ansible", type: "ansible_local" do |a|
     a.playbook = "k3s.yml"
+    a.compatibility_mode = "2.0"
     a.extra_vars = {
       "node_ip": "10.10.10.10"
     }

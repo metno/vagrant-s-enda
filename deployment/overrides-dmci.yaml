@@ -43,11 +43,5 @@ kind: Service
 metadata:
   name: dmci
 spec:
-  type: LoadBalancer
   clusterIP:
-  ports:
-    - protocol: TCP
-      name: http
-      targetPort: http
-      port: 8000
-
+  type: LoadBalancer
