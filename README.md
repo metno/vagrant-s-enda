@@ -78,7 +78,7 @@ To connect the dots, we have a C4 diagram which describes how it all connects to
 ![Deployment](dep.svg)
 
 <!---
-'plantuml -tsvg README.md
+# java -jar ~/Nedlastinger/plantuml.jar -tsvg README.md
 
 @startuml dep
 !includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/v2.0.1/C4_Component.puml
