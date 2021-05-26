@@ -20,7 +20,7 @@ See [Vagrant](https://www.vagrantup.com/) documentation for more information abo
 
 These are the endpoint you have access to.
 
-* [`10.10.10.10`](http://10.10.10.10) --- [PyCSW](https://github.com/geopython/pycsw) API endpoint.
+* [`10.10.10.10`](http://10.10.10.10) --- [PyCSW](https://github.com/geopython/pycsw) API endpoint
 * [`10.10.10.10:8000`](http://10.10.10.10:8000) -- [DMCI](https://github.com/metno/discovery-metadata-catalog-ingestor) API endpoint
 * [`10.10.10.10:8080`](http://10.10.10.10:8080) --- [MMS](https://github.com/metno/go-mms) API endpoint
 * `10.10.10.10:4222` --- MMS NATS endpoint
@@ -35,7 +35,7 @@ All commands can be run from the `vagrant` user inside the VM. Access the VM by 
 
 #### Data storage
 
-All permanent storage folders resides in the VMs `/opt` folder. Kubernetes assigns subfolder here dynamically which are mounted into the containers. In opt folder run the `tree` command to find the archive folder. Example output.
+All permanent storage folders reside in the VM's `/opt` folder. Kubernetes dynamically mounts subfolders in `\opt` in the containers. In `\opt`, you can run the `tree` command to find the archive folders. Example output:
 
 ```plain
 vagrant@k3s:/opt$ tree
@@ -55,11 +55,11 @@ vagrant@k3s:/opt$ tree
 
 ### Discovery Metadata Catalog Ingestor, DMCI
 
-Ingesting MMD files to both archive and PyCSW.
+An API tool for ingesting MMD files to the archive and the PyCSW database.
 
 #### Insert
 
-This validates the MMD file. If the validation goes through, we ingest the MMD file into the archive folder, convert it to ISO and ingest it into PyCSW.
+API method to first validate and then ingest the MMD file in case of successful validation. In case the validation fails, the user receives an error message. If the validation succeeds, the MMD file is ingested into the archive folder, converted to the Norwegian version of the INSPIRE ISO19115 profile and ingested into the PyCSW database.
 
 ```bash
 curl --data-binary @test/metopb-avhrr-20201201155244-20201201160030.xml http://10.10.10.10:8000/v1/insert
