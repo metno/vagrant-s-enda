@@ -1,0 +1,15 @@
+---
+dmci:
+  distributors:
+    - file
+    - pycsw
+  distributor_cache: /workdir
+  max_permitted_size: 100000
+  mmd_xslt_path: /usr/share/mmd/xslt/mmd-to-geonorge.xslt
+  mmd_xsd_path: /usr/share/mmd/xsd/mmd_strict.xsd
+
+pycsw:
+  csw_service_url: http://pycsw:8000
+
+file:
+  file_archive_path: /archive

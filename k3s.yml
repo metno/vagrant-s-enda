@@ -5,7 +5,7 @@
 
   vars:
     k3s_version: v1.20.6+k3s1
-    k9s_version: v0.24.9
+    k9s_version: v0.24.10
     kustomize_version: v4.1.2
     use_docker: true
     docker_json:
@@ -176,7 +176,7 @@
 
     - name: get k9s
       get_url:
-        url: 'https://github.com/derailed/k9s/releases/download/{{ k9s_version }}/k9s_Linux_{{ ansible_architecture }}.tar.gz'
+        url: 'https://github.com/derailed/k9s/releases/download/{{ k9s_version }}/k9s_{{ k9s_version }}_Linux_{{ ansible_architecture }}.tar.gz'
         checksum: 'sha256:https://github.com/derailed/k9s/releases/download/{{ k9s_version }}/checksums.txt'
         dest: /tmp/k9s.tar.gz
       register: k9s_download

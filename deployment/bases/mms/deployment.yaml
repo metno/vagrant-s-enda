@@ -28,6 +28,8 @@ spec:
     matchLabels:
       app.kubernetes.io/name: mms
       app.kubernetes.io/instance: s-enda
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -37,7 +39,7 @@ spec:
       containers:
         - name: mms
           image: registry.met.no/s-enda/container-go-mms:f92ccde9
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           command:
             - /app/mmsd
             - --hostname

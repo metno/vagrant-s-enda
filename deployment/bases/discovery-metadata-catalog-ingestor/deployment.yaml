@@ -1,0 +1,132 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dmci-storage
+  labels:
+    app.kubernetes.io/name: dmci
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dmci
+  annotations:
+    app.kubernetes.io/name: dmci
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dmci
+  # strategy:
+  #   type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dmci
+    spec:
+      restartPolicy: Always
+      initContainers:
+        - name: periodic-git-pusher-pull
+          image: registry.met.no/s-enda/container-periodic-git-pusher:latest
+          imagePullPolicy: Always
+          command:
+            - /pull.sh
+          env:
+            - name: ENABLED
+              value: "false"
+            - name: GIT_OPTIONS
+              value: ""
+            - name: REPO_URL
+              value: "https://user:token@github.com/some/repo"
+            - name: SCHEDULE
+              value: "300"
+          volumeMounts:
+            - mountPath: /repo
+              subPath: archive
+              name: dmci-storage
+      containers:
+        - name: dmci
+          image: registry.met.no/s-enda/container-dmci:latest
+          imagePullPolicy: Always
+          command:
+            - gunicorn
+            - --worker-class
+            - sync
+            - --workers
+            - "25"
+            - --bind
+            - 0.0.0.0:8000
+            - wsgi:app
+            - --keep-alive
+            - "5"
+            - --log-level
+            - info
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: DMCI_LOGLEVEL
+              value: DEBUG
+          volumeMounts:
+            - mountPath: /archive
+              subPath: archive
+              name: dmci-storage
+            - mountPath: /workdir
+              subPath: workdir
+              name: dmci-storage
+            - mountPath: /config.yaml
+              subPath: config.yaml
+              name: dmci-config
+            - mountPath: /.local
+              name: tmp-dir
+        - name: periodic-git-pusher
+          image: registry.met.no/s-enda/container-periodic-git-pusher:latest
+          imagePullPolicy: Always
+          env:
+            - name: ENABLED
+              value: "false"
+            - name: GIT_OPTIONS
+              value: ""
+            - name: REPO_URL
+              value: "https://user:token@github.com/some/repo"
+            - name: SCHEDULE
+              value: "300"
+          volumeMounts:
+            - mountPath: /repo
+              subPath: archive
+              name: dmci-storage
+      volumes:
+        - name: tmp-dir
+          emptyDir: {}
+        - name: dmci-config
+          configMap:
+            name: dmci-config
+        - name: dmci-storage
+          persistentVolumeClaim:
+            claimName: dmci-storage
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dmci
+  labels:
+    app.kubernetes.io/name: dmci
+spec:
+  selector:
+    app.kubernetes.io/name: dmci
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      name: http
+      targetPort: http
+      port: 80
+
