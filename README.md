@@ -65,9 +65,7 @@ This validates the MMD file. If the validation goes through, we ingest the MMD f
 curl --data-binary @test/metopb-avhrr-20201201155244-20201201160030.xml http://10.10.10.10:8000/v1/insert
 ```
 
-### PyCSW
-
-The CSW endpoint.
+### CSW endpoint
 
 #### List all datasets
 
