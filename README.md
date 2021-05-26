@@ -14,6 +14,8 @@ vagrant up
 
 You have now started a VM with services that you can access from you local machine on the IP `10.10.10.10`. This is a private address and not accessible from  other machines.
 
+See [Vagrant](https://www.vagrantup.com/) documentation for more information about [Command-Line Interface](https://www.vagrantup.com/docs/cli).
+
 ### Endpoints
 
 These are the endpoint you have access to.
