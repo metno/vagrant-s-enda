@@ -55,7 +55,7 @@ vagrant@k3s:/opt$ tree
 
 ### Discovery Metadata Catalog Ingestor, DMCI
 
-An API tool for ingesting MMD files to the archive and the PyCSW database.
+An API tool for ingesting MMD files to the archive and the PyCSW database. See [DMCI Usage](https://github.com/metno/discovery-metadata-catalog-ingestor#usage) for API return codes.
 
 #### Insert
 
