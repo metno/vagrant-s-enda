@@ -6,7 +6,7 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/focal64"
+  config.vm.box = "ubuntu/hirsute64"
   config.vm.box_check_update = false
   config.vm.network "private_network", ip: "10.10.10.10"
   # config.vm.network "public_network"
