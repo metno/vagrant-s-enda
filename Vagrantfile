@@ -37,6 +37,11 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "start or update kubernetes deployment", type: "shell", run: "always", inline: <<-SHELL
+    # seed the config map, so we don't get too large config for kubectl apply
+    kubectl get configmaps| grep jts-jar >/dev/null
+    if [ $? != 0 ] ; then
+        kubectl create configmap jts-jar --from-file=/vagrant/deployment/bases/solr/config/jts-core-1.18.2.jar
+    fi
     kustomize build /vagrant/deployment/environment/vagrant/ | kubectl apply -f -
   SHELL
 end

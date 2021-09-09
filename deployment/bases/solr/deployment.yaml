@@ -1,0 +1,151 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: solr-data
+  labels:
+    app.kubernetes.io/name: solr
+    app.kubernetes.io/instance: s-enda
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: solr-config
+  labels:
+    app.kubernetes.io/name: solr
+    app.kubernetes.io/instance: s-enda
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solr
+  annotations:
+    app.kubernetes.io/name: solr
+    app.kubernetes.io/instance: s-enda
+    app.kubernetes.io/version: v1.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: solr
+      app.kubernetes.io/instance: s-enda
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: solr
+        app.kubernetes.io/instance: s-enda
+    spec:
+      initContainers:
+        - name: init-db-directory
+          image: docker.io/alpine:latest
+          imagePullPolicy: Always
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -x
+              [ -s /mnt/schema.xml ] && echo "repo exists" && exit 0
+              apk update
+              apk add git
+              git clone https://github.com/magnarem/drupal8solr_configs.git /mnt || echo "[repo exist, ignore]" && true
+          volumeMounts:
+            - mountPath: /mnt
+              name: solr-config
+              readOnly: false
+        - name: create-s-enda-core
+          image: docker.io/library/solr:8.9
+          imagePullPolicy: Always
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -x
+              /opt/docker-solr/scripts/init-var-solr
+              . /opt/docker-solr/scripts/run-initdb
+              /opt/solr/bin/solr start
+              /opt/solr/bin/solr create_core -c senda -d drupal8solr_configs || true
+          volumeMounts:
+            - mountPath: /var/solr
+              name: solr-data
+              readOnly: false
+            - mountPath: /opt/solr/server/solr/configsets/drupal8solr_configs
+              name: solr-config
+              readOnly: true
+            - mountPath: /opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.18.2.jar
+              name: jts-jar
+              subPath: jts-core-1.18.2.jar
+              readOnly: true
+          ports:
+            - name: solr-port
+              containerPort: 8983
+              protocol: TCP
+      containers:
+        - name: solr
+          image: docker.io/library/solr:8.9
+          imagePullPolicy: Always
+          env:
+            - name: SOLR_IP_WHITELIST
+              value: "127.0.0.1, [::1], 10.0.0.0/8"
+          ports:
+            - name: solr-port
+              containerPort: 8983
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/solr
+              name: solr-data
+              readOnly: false
+            - mountPath: /opt/solr/server/solr/configsets/drupal8solr_configs
+              name: solr-config
+              readOnly: true
+            - mountPath: /opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.18.2.jar
+              name: jts-jar
+              subPath: jts-core-1.18.2.jar
+              readOnly: true
+
+      volumes:
+        - name: solr-data
+          persistentVolumeClaim:
+            claimName: solr-data
+        - name: solr-config
+          persistentVolumeClaim:
+            claimName: solr-config
+        - name: jts-jar
+          configMap:
+            name: jts-jar
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: solr-port
+  labels:
+    app.kubernetes.io/name: solr
+    app.kubernetes.io/instance: s-enda
+spec:
+  selector:
+    app.kubernetes.io/name: solr
+    app.kubernetes.io/instance: s-enda
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      name: solr
+      targetPort: solr
+      port: 8983
+
+
