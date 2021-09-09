@@ -63,7 +63,7 @@ spec:
               [ -s /mnt/schema.xml ] && echo "repo exists" && exit 0
               apk update
               apk add git
-              git clone https://github.com/magnarem/drupal8solr_configs.git /mnt || echo "[repo exist, ignore]" && true
+              git clone https://github.com/magnarem/drupal8solr_configs.git /mnt
           volumeMounts:
             - mountPath: /mnt
               name: solr-config
