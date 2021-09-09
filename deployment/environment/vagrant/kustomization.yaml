@@ -17,11 +17,13 @@ resources:
   - ../../bases/mms
   - ../../bases/sleeper
   - ../../bases/catalog-service-api
+  - ../../bases/solr
 patchesStrategicMerge:
   - overrides-dmci.yaml
   - overrides-mms.yaml
   - overrides-pycsw.yaml
   - overrides-postgis.yaml
+  - overrides-solr.yaml
 patchesJson6902:
   - target:
       kind: Service
