@@ -13,3 +13,4 @@ configMapGenerator:
 resources:
   - postgis.yaml
   - pycsw.yaml
+
