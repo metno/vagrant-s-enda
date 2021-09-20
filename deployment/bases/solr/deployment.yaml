@@ -99,11 +99,8 @@ spec:
         - name: solr
           image: docker.io/library/solr:8.9
           imagePullPolicy: Always
-          env:
-            - name: SOLR_IP_WHITELIST
-              value: "127.0.0.1, [::1], 10.0.0.0/8"
           ports:
-            - name: solr-port
+            - name: solr
               containerPort: 8983
               protocol: TCP
           volumeMounts:
@@ -147,5 +144,6 @@ spec:
       name: solr
       targetPort: solr
       port: 8983
+
 
 
