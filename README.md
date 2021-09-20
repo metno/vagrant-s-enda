@@ -24,6 +24,7 @@ These are the endpoint you have access to.
 * [`10.10.10.10:8000`](http://10.10.10.10:8000) -- [DMCI](https://github.com/metno/discovery-metadata-catalog-ingestor) API endpoint
 * [`10.10.10.10:8080`](http://10.10.10.10:8080) --- [MMS](https://github.com/metno/go-mms) API endpoint
 * `10.10.10.10:4222` --- MMS NATS endpoint
+* [`10.10.10.10:8983`](http://10.10.10.10:8983) --- [SOLR](https://gitbox.apache.org/repos/asf/solr.git) API endpoint
 
 ### Inside the VM
 
@@ -70,6 +71,12 @@ curl --data-binary @test/metopb-avhrr-20201201155244-20201201160030.xml http://1
 #### List all datasets
 
 * http://10.10.10.10/?mode=opensearch&service=CSW&version=2.0.2&request=GetRecords&elementsetname=full&typenames=csw:Record&resulttype=results
+
+### SOLR endpoints
+
+#### List cores
+
+* http://10.10.10.10:8983/solr/admin/cores
 
 ## Diagram
 
