@@ -120,6 +120,7 @@ System_Boundary(k8s_env, "Kubernetes environment") {
   Component("service_dmci", "dmci", "service", "Service component exposing DMCI API on port 8000.")
   Component("service_mms_nats", "mms-nats", "service", "MMS Nats service exposed on NodePort on 4222.")
   Component("service_mms_http", "mms-http", "service", "MMS API service exposed on port 8080.")
+  Component("service_solr", "solr", "service", "Service component exposing SOLR on port 8983")
 
 
   '
@@ -134,6 +135,7 @@ System_Boundary(k8s_env, "Kubernetes environment") {
   ComponentDb(catalog_service_postgis_storage, "postgis", "pvc", "Permanent storage for PostGIS.")
   ComponentDb(storage_dmci, "dmci-storage", "pvc", "Permanent archive storage for DMCI.")
   ComponentDb(storage_mms, "mms-workdir", "pvc", "Permanent storage for MMS.")
+  ComponentDb(storage_solr, "solr-storage", "pvc", "Permanent storage for SOLR.")
 
   Rel(catalog_service_postgis, catalog_service_postgis_storage, "Stores data in physical volume claim")
 
@@ -173,6 +175,15 @@ System_Boundary(k8s_env, "Kubernetes environment") {
     Rel(container_go_mms, storage_mms, "Stores database")
   }
 
+  '
+  ' Deployment solr
+  '
+  Container_Boundary("boundary_solr", "solr deployment") {
+    Component(container_solr, "solr", "conainer-solr", "Solr Service.")
+
+    Rel(service_solr, container_solr, "LB")
+    Rel(container_solr, storage_solr, "Solr database")
+  }
 
   '
   ' Deployment pycsw-ingest
@@ -182,7 +193,7 @@ System_Boundary(k8s_env, "Kubernetes environment") {
   Rel(internal_user, service_dmci, "Access DMCI API via", "10.10.10.10:8000")
   Rel(internal_user, service_mms_nats, "Access MMS Nats via", "10.10.10.10:4222")
   Rel(internal_user, service_mms_http, "Access MMS API via", "10.10.10.10:8080")
-
+  Rel(internal_user, service_solr, "Access SOLR", "10.10.10.10:8983")
 }
 
 @enduml
