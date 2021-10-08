@@ -26,7 +26,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 100Mi
 
 ---
 apiVersion: apps/v1
@@ -53,23 +53,22 @@ spec:
     spec:
       initContainers:
         - name: init-db-directory
-          image: docker.io/alpine:latest
+          image: docker.io/metno/container-alpine-git:latest
           imagePullPolicy: Always
           command:
             - /bin/sh
             - -c
             - |
               set -x
-              [ -s /mnt/schema.xml ] && echo "repo exists" && exit 0
-              apk update
-              apk add git
-              git clone https://github.com/magnarem/drupal8solr_configs.git /mnt
+              [ -s /mnt/drupal8solr_configs/schema.xml ] && echo "repo exists" && exit 0
+              mkdir -p /mnt/drupal8solr_configs
+              git clone https://github.com/magnarem/drupal8solr_configs.git /mnt/drupal8solr_configs
           volumeMounts:
             - mountPath: /mnt
               name: solr-config
               readOnly: false
         - name: create-s-enda-core
-          image: docker.io/library/solr:8.9
+          image: docker.io/metno/container-solr-jts:latest
           imagePullPolicy: Always
           command:
             - /bin/bash
@@ -84,35 +83,27 @@ spec:
             - mountPath: /var/solr
               name: solr-data
               readOnly: false
-            - mountPath: /opt/solr/server/solr/configsets/drupal8solr_configs
+            - mountPath: /opt/solr/server/solr/configsets/
               name: solr-config
               readOnly: true
-            - mountPath: /opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.18.2.jar
-              name: jts-jar
-              subPath: jts-core-1.18.2.jar
-              readOnly: true
           ports:
-            - name: solr-port
+            - name: solr-http
               containerPort: 8983
               protocol: TCP
       containers:
         - name: solr
-          image: docker.io/library/solr:8.9
+          image: docker.io/metno/container-solr-jts:latest
           imagePullPolicy: Always
           ports:
-            - name: solr
+            - name: solr-http
               containerPort: 8983
               protocol: TCP
           volumeMounts:
             - mountPath: /var/solr
               name: solr-data
               readOnly: false
-            - mountPath: /opt/solr/server/solr/configsets/drupal8solr_configs
+            - mountPath: /opt/solr/server/solr/configsets/
               name: solr-config
-              readOnly: true
-            - mountPath: /opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.18.2.jar
-              name: jts-jar
-              subPath: jts-core-1.18.2.jar
               readOnly: true
       volumes:
         - name: solr-data
@@ -121,15 +112,12 @@ spec:
         - name: solr-config
           persistentVolumeClaim:
             claimName: solr-config
-        - name: jts-jar
-          configMap:
-            name: jts-jar
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: solr-port
+  name: solr
   labels:
     app.kubernetes.io/name: solr
     app.kubernetes.io/instance: s-enda
@@ -140,6 +128,6 @@ spec:
   clusterIP: None
   ports:
     - protocol: TCP
-      name: solr
-      targetPort: solr
+      name: solr-http
+      targetPort: solr-http
       port: 8983
