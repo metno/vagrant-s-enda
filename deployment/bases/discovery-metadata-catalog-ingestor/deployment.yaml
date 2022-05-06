@@ -82,6 +82,9 @@ spec:
             - mountPath: /workdir
               subPath: workdir
               name: dmci-storage
+            - mountPath: /reject
+              subPath: reject
+              name: dmci-storage
             - mountPath: /config.yaml
               subPath: config.yaml
               name: dmci-config

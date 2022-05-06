@@ -4,6 +4,7 @@ dmci:
     - file
     - pycsw
   distributor_cache: /workdir
+  rejected_jobs_path: /reject
   max_permitted_size: 100000
   mmd_xslt_path: /usr/share/mmd/xslt/mmd-to-geonorge.xslt
   mmd_xsd_path: /usr/share/mmd/xsd/mmd_strict.xsd
