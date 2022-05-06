@@ -78,9 +78,9 @@ curl --data-binary @test/metopb-avhrr-20201201155244-20201201160030.xml http://1
 
 * http://192.168.56.10:8983/solr/admin/cores
 
-## Diagram
+## Deployment diagram
 
-To connect the dots, we have a C4 diagram which describes how it all connects together.
+To connect the dots, we have a deployment diagram which describes how it all connects together in Kubernetes.
 
 ![Deployment](dep.svg)
 
