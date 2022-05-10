@@ -39,7 +39,7 @@ All commands can be run from the `vagrant` user inside the VM. Access the VM by 
 All permanent storage folders reside in the VM's `/opt` folder. Kubernetes dynamically mounts subfolders in `\opt` in the containers. In `\opt`, you can run the `tree` command to find the archive folders. Example output:
 
 ```plain
-vagrant@k3s:/opt$ tree
+vagrant@k3s:/opt$ sudo tree
 .
 ├── containerd [error opening dir]
 ├── pvc-49dc1064-4e6b-4401-94b7-8e122e8524d1_default_postgis
