@@ -12,7 +12,7 @@ To start the S-ENDA services. Just start the VM as follows.
 vagrant up
 ```
 
-You have now started a VM with services that you can access from you local machine on the IP `192.168.56.10`. This is a private address and not accessible from  other machines.
+You have now started a VM with services running on kubernetes that you can access from you local machine on the IP `192.168.56.10`. This is a private address and not accessible from  other machines. Note that the VM needs a couple of minutes for kubernetes to start the services after Vagrant is done building the machine.
 
 See [Vagrant](https://www.vagrantup.com/) documentation for more information about [Command-Line Interface](https://www.vagrantup.com/docs/cli).
 
