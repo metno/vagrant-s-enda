@@ -12,7 +12,7 @@ To start the S-ENDA services. Just start the VM as follows.
 vagrant up
 ```
 
-You have now started a VM with services that you can access from you local machine on the IP `10.10.10.10`. This is a private address and not accessible from  other machines.
+You have now started a VM with services running on kubernetes that you can access from you local machine on the IP `192.168.56.10`. This is a private address and not accessible from  other machines. Note that the VM needs a couple of minutes for kubernetes to start the services after Vagrant is done building the machine.
 
 See [Vagrant](https://www.vagrantup.com/) documentation for more information about [Command-Line Interface](https://www.vagrantup.com/docs/cli).
 
@@ -20,11 +20,11 @@ See [Vagrant](https://www.vagrantup.com/) documentation for more information abo
 
 These are the endpoint you have access to.
 
-* [`10.10.10.10`](http://10.10.10.10) --- [PyCSW](https://github.com/geopython/pycsw) API endpoint
-* [`10.10.10.10:8000`](http://10.10.10.10:8000) -- [DMCI](https://github.com/metno/discovery-metadata-catalog-ingestor) API endpoint
-* [`10.10.10.10:8080`](http://10.10.10.10:8080) --- [MMS](https://github.com/metno/go-mms) API endpoint
-* `10.10.10.10:4222` --- MMS NATS endpoint
-* [`10.10.10.10:8983`](http://10.10.10.10:8983) --- [SOLR](https://gitbox.apache.org/repos/asf/solr.git) API endpoint
+* [`192.168.56.10`](http://192.168.56.10) --- [PyCSW](https://github.com/geopython/pycsw) API endpoint
+* [`192.168.56.10:8000`](http://192.168.56.10:8000) -- [DMCI](https://github.com/metno/discovery-metadata-catalog-ingestor) API endpoint
+* [`192.168.56.10:8080`](http://192.168.56.10:8080) --- [MMS](https://github.com/metno/go-mms) API endpoint
+* `192.168.56.10:4222` --- MMS NATS endpoint
+* [`192.168.56.10:8983`](http://192.168.56.10:8983) --- [SOLR](https://gitbox.apache.org/repos/asf/solr.git) API endpoint
 
 ### Inside the VM
 
@@ -39,7 +39,7 @@ All commands can be run from the `vagrant` user inside the VM. Access the VM by 
 All permanent storage folders reside in the VM's `/opt` folder. Kubernetes dynamically mounts subfolders in `\opt` in the containers. In `\opt`, you can run the `tree` command to find the archive folders. Example output:
 
 ```plain
-vagrant@k3s:/opt$ tree
+vagrant@k3s:/opt$ sudo tree
 .
 ├── containerd [error opening dir]
 ├── pvc-49dc1064-4e6b-4401-94b7-8e122e8524d1_default_postgis
@@ -63,24 +63,24 @@ An API tool for ingesting MMD files to the archive and the PyCSW database. See [
 API method to first validate and then ingest the MMD file in case of successful validation. In case the validation fails, the user receives an error message. If the validation succeeds, the MMD file is ingested into the archive folder, converted to the Norwegian version of the INSPIRE ISO19115 profile and ingested into the PyCSW database.
 
 ```bash
-curl --data-binary @test/metopb-avhrr-20201201155244-20201201160030.xml http://10.10.10.10:8000/v1/insert
+curl --data-binary @test/metopb-avhrr-20201201155244-20201201160030.xml http://192.168.56.10:8000/v1/insert
 ```
 
 ### CSW endpoint
 
 #### List all datasets
 
-* http://10.10.10.10/?mode=opensearch&service=CSW&version=2.0.2&request=GetRecords&elementsetname=full&typenames=csw:Record&resulttype=results
+* http://192.168.56.10/?mode=opensearch&service=CSW&version=2.0.2&request=GetRecords&elementsetname=full&typenames=csw:Record&resulttype=results
 
 ### SOLR endpoints
 
 #### List cores
 
-* http://10.10.10.10:8983/solr/admin/cores
+* http://192.168.56.10:8983/solr/admin/cores
 
-## Diagram
+## Deployment diagram
 
-To connect the dots, we have a C4 diagram which describes how it all connects together.
+To connect the dots, we have a deployment diagram which describes how it all connects together in Kubernetes.
 
 ![Deployment](dep.svg)
 
@@ -189,11 +189,11 @@ System_Boundary(k8s_env, "Kubernetes environment") {
   ' Deployment pycsw-ingest
   '
 
-  Rel(internal_user, pycsw_service, "Access CSW API via", "10.10.10.10:80")
-  Rel(internal_user, service_dmci, "Access DMCI API via", "10.10.10.10:8000")
-  Rel(internal_user, service_mms_nats, "Access MMS Nats via", "10.10.10.10:4222")
-  Rel(internal_user, service_mms_http, "Access MMS API via", "10.10.10.10:8080")
-  Rel(internal_user, service_solr, "Access SOLR", "10.10.10.10:8983")
+  Rel(internal_user, pycsw_service, "Access CSW API via", "192.168.56.10:80")
+  Rel(internal_user, service_dmci, "Access DMCI API via", "192.168.56.10:8000")
+  Rel(internal_user, service_mms_nats, "Access MMS Nats via", "192.168.56.10:4222")
+  Rel(internal_user, service_mms_http, "Access MMS API via", "192.168.56.10:8080")
+  Rel(internal_user, service_solr, "Access SOLR", "192.168.56.10:8983")
 }
 
 @enduml

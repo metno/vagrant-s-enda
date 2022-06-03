@@ -6,9 +6,9 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/hirsute64"
+  config.vm.box = "ubuntu/focal64"
   config.vm.box_check_update = false
-  config.vm.network "private_network", ip: "10.10.10.10"
+  config.vm.network "private_network", ip: "192.168.56.10"
   # config.vm.network "public_network"
   config.vm.synced_folder "./", "/vagrant"
 
@@ -25,14 +25,14 @@ Vagrant.configure("2") do |config|
   config.vm.provision "prepare installation of k3s", type: "shell", inline: <<-SHELL
     apt-get update
     apt-get install -y python3-pip tree
-    pip3 install ansible==3.3
+    pip3 install -r /vagrant/requirements.txt
   SHELL
 
   config.vm.provision "install k3s with ansible", type: "ansible_local" do |a|
     a.playbook = "k3s.yml"
     a.compatibility_mode = "2.0"
     a.extra_vars = {
-      "node_ip": "10.10.10.10"
+      "node_ip": "192.168.56.10"
     }
   end
 

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: solr-port
+  name: solr
 spec:
   clusterIP:
   type: LoadBalancer

@@ -1,0 +1,5 @@
+# Use Ansible 2.12
+ansible-core~=2.12.5
+
+# Install collection collections
+ansible~=5.8.0
